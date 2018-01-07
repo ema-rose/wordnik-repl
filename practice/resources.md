@@ -14,6 +14,10 @@ Given the size and complexity of the python docs, the [overapi.com index](http:/
 
 Your own collection of completed exercises can also be a useful source of "documentation", and one that you can expand and refine as your experience grows.
 
+One of the main benefits of python is its readability, which is improved when developers follow the same conventions on how to format python files for humans -- called `style` even though the python interpreter would be able to read the code with many alternate style conventions.
+
+Checking code against agreed conventions and using tools to check the code for simple errors of syntax or use is often called `linting`. This project will use `flake8` and `pylint` as linting tools. A helpful resource for addressing the style issues raised by these tools is [google's python style guide](https://google.github.io/styleguide/pyguide.html).
+
 ## git
 
 [Basic git commands](https://services.github.com/on-demand/downloads/github-git-cheat-sheet/)
