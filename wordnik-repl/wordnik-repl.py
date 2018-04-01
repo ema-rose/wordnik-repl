@@ -3,6 +3,7 @@
 import sys
 import os
 
+import api
 
 sanity = 'Sanity!'  # TODO remove
 PROMPT = 'wordnik repl >> '
@@ -25,7 +26,10 @@ def repl(Session, prompt=PROMPT, out='', cls=False):
                 cls()
             if out is not '':
                 print(out)
-            print('No help')
+            if iterate == 'pdb':
+                import pdb
+                pdb.set_trace()
+            print('... under construction ...')
 
 
 def cls():
@@ -54,7 +58,10 @@ class Session(object):
         """Set up a session to own user and run games."""
         self.wnp = env_check('WNP')
         self.wnu = env_check('WNU')
+        self.wnk = env_check('WNK')
+        self.api = api.ApiHandler(self.wnu, self.wnp, self.wnk)
 
 
+api.sanity()
 session = Session()
 repl(session)
