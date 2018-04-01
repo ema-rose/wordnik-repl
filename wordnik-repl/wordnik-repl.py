@@ -33,16 +33,28 @@ def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
+def env_check(var):
+    """Check for env var."""
+    try:
+        key = os.environ[var]
+    except KeyError as err:
+        if var in str(err):
+            print('[ERROR] No {} env var provided.'
+                  ' Please set and restart.'.format(var))
+            exit(1)
+        else:
+            raise err
+    return key
+
+
 class Session(object):
     """An instance of the repl."""
 
     def __init__(self):
         """Set up a session to own user and run games."""
-        self._check4user()
+        self.wnp = env_check('WNP')
+        self.wnu = env_check('WNU')
 
-    def _check4user(self):
-        """Create user from env vars or from prompt."""
-        print(sanity)
 
 session = Session()
 repl(session)
