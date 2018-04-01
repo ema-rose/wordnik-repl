@@ -1,21 +1,19 @@
 """A terminal based vocabulary game."""
 
-import sys
 import os
+import pdb
+import sys
 
 import api
 
-sanity = 'Sanity!'  # TODO remove
 PROMPT = 'wordnik repl >> '
 EXIT = ['exit', 'exit()', 'quit', 'quit()']
 ASK4HELP = ['-h', '--help', 'help']
 HELP = """Help under construction. Use CTRL-C to exit."""
 GAME_LISTS = {
-    'alpha': '',
-    'beta': '',
-    'gamma': '',
-    'delta': '',
-    'epsilon': ''
+    'master': '',
+    'known': '',
+    'unknown': ''
 }
 
 
@@ -33,10 +31,10 @@ def call_method(target_class, target_method):
     method()
 
 
-def repl(session, prompt=PROMPT, out='', cls=False):
+def repl(session):
     """Main input/output loop."""
     while True:
-        iterate = input(PROMPT).strip().lower()
+        iterate = input(session.prompt).strip().lower()
         if iterate in ASK4HELP:
             print(HELP)
             continue
@@ -45,13 +43,13 @@ def repl(session, prompt=PROMPT, out='', cls=False):
         else:
             if iterate == 'cls':
                 clear_screen()
-            if out is not '':
-                print(out)
+                continue
             if iterate == 'pdb':
-                import pdb
                 pdb.set_trace()
-            # print('... under construction ...')
-            call_method(session, iterate)
+                continue
+        call_method(session, iterate)
+        if session.out is not '':
+            print(session.out)
 
 
 def clear_screen():
@@ -81,12 +79,31 @@ class Session(object):
         self.wnp = env_check('WNP')
         self.wnu = env_check('WNU')
         self.wnk = env_check('WNK')
+        self.prompt = PROMPT
+        self.out = ''
+        self.menu = {}
         self.api = api.ApiHandler(self.wnu, self.wnp, self.wnk)
 
     def test(self):
         """Test."""
         print('WORKS!')
 
+    def begin(self):
+        """Command for user to start game."""
+        self._startGame()
+        self.out = self.permalinks
 
-session = Session()
-repl(session)
+    def _startGame(self):
+        """Get words from lists and invoke game."""
+        self._getPermalinks()
+
+    def _saveResults(self):
+        """Save game score."""
+        pass
+
+    def _getPermalinks(self):
+        """Construct permaLinks names from existing wordlists."""
+        self.permalinks = self.api.wordLists()
+
+
+repl(Session())

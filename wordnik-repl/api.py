@@ -32,7 +32,7 @@ class ApiHandler(object):
         self.user = user
         self.pw = pw
         self.headers = {'api_key': key}
-        self.token = self._refresh_token()
+        self.headers['auth_token'] = self._refresh_token()
 
     @staticmethod
     def _api_error(message, req):
