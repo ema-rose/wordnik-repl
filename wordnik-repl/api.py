@@ -34,6 +34,17 @@ class ApiHandler(object):
         self.headers = {'api_key': key}
         self.token = self._refresh_token()
 
+    @staticmethod
+    def _api_error(message, req):
+        """API error output."""
+        base_msg = '\n[ERROR] {} Status: {} on url: {} returned: {}'
+        print(base_msg.format(
+            message,
+            req.status_code,
+            req.url,
+            req.content
+        ))
+
     def _refresh_token(self):
         uri = full_uri('account', 'authenticate', self.user)
         req = requests.post(uri, headers=self.headers, data=self.pw)
@@ -41,5 +52,13 @@ class ApiHandler(object):
             print('\n[INFO] (re)Authenticated.')
             return req.json()['token']
         else:
-            print('\n[ERROR] Unable to authenticate. Status: {}  '
-                  'Content: {}'.format(req.status_code, req.content))
+            self._api_error('Unable to authenticate.', req)
+
+    def wordLists(self):
+        """Return dict of name, permalink."""
+        uri = full_uri('account', 'wordLists')
+        req = requests.get(uri, headers=self.headers)
+        if req.status_code == 200:
+            return req.json()
+        else:
+            self._api_error('Unable to retrieve word lists.', req)

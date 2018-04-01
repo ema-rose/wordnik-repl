@@ -10,29 +10,51 @@ PROMPT = 'wordnik repl >> '
 EXIT = ['exit', 'exit()', 'quit', 'quit()']
 ASK4HELP = ['-h', '--help', 'help']
 HELP = """Help under construction. Use CTRL-C to exit."""
+GAME_LISTS = {
+    'alpha': '',
+    'beta': '',
+    'gamma': '',
+    'delta': '',
+    'epsilon': ''
+}
 
 
-def repl(Session, prompt=PROMPT, out='', cls=False):
+def call_method(target_class, target_method):
+    """Provide access to objects through the repl."""
+    try:
+        method = getattr(target_class, target_method)
+    except AttributeError:
+        print(
+            'Class `{}` has no method `{}`'.format(
+                target_class.__class__.__name__, target_method
+            )
+        )
+        return
+    method()
+
+
+def repl(session, prompt=PROMPT, out='', cls=False):
     """Main input/output loop."""
     while True:
-        iterate = input(PROMPT)
-        if iterate.strip().lower() in ASK4HELP:
+        iterate = input(PROMPT).strip().lower()
+        if iterate in ASK4HELP:
             print(HELP)
             continue
-        if iterate.strip().lower() in EXIT:
+        if iterate in EXIT:
             sys.exit()
         else:
-            if cls:
-                cls()
+            if iterate == 'cls':
+                clear_screen()
             if out is not '':
                 print(out)
             if iterate == 'pdb':
                 import pdb
                 pdb.set_trace()
-            print('... under construction ...')
+            # print('... under construction ...')
+            call_method(session, iterate)
 
 
-def cls():
+def clear_screen():
     """Cross platform screen clear."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -61,7 +83,10 @@ class Session(object):
         self.wnk = env_check('WNK')
         self.api = api.ApiHandler(self.wnu, self.wnp, self.wnk)
 
+    def test(self):
+        """Test."""
+        print('WORKS!')
 
-api.sanity()
+
 session = Session()
 repl(session)
