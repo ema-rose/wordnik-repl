@@ -59,6 +59,9 @@ class ApiHandler(object):
         uri = full_uri('account', 'wordLists')
         req = requests.get(uri, headers=self.headers)
         if req.status_code == 200:
-            return req.json()
+            wordlists = {}
+            for json_object in req.json():
+                wordlists[json_object['name']] = json_object['permalink']
+            return wordlists
         else:
             self._api_error('Unable to retrieve word lists.', req)

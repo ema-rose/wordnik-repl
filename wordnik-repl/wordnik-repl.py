@@ -10,11 +10,11 @@ PROMPT = 'wordnik repl >> '
 EXIT = ['exit', 'exit()', 'quit', 'quit()']
 ASK4HELP = ['-h', '--help', 'help']
 HELP = """Help under construction. Use CTRL-C to exit."""
-GAME_LISTS = {
-    'master': '',
-    'known': '',
-    'unknown': ''
-}
+GAME_LISTS = [
+    'master',
+    'known',
+    'unknown',
+]
 
 
 def call_method(target_class, target_method):
@@ -29,6 +29,11 @@ def call_method(target_class, target_method):
         )
         return
     method()
+
+
+def pdb_time(message):
+    """Warn dev of an error, but don't exit."""
+    print('[ERROR] {} -- please enter pbd'.format(message))
 
 
 def repl(session):
@@ -103,7 +108,14 @@ class Session(object):
 
     def _getPermalinks(self):
         """Construct permaLinks names from existing wordlists."""
-        self.permalinks = self.api.wordLists()
+        all_lists = self.api.wordLists()
+        permalinks = {}
+        for key, value in all_lists.items():
+            if key.lower() in GAME_LISTS:
+                permalinks[key.lower()] = value
+        if len(permalinks) is not 3:
+            pdb_time("permalinks not == 3")
+        self.permalinks = permalinks
 
 
 repl(Session())
