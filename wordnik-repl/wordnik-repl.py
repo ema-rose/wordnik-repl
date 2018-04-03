@@ -39,6 +39,11 @@ def pdb_time(message):
 def repl(session):
     """Main input/output loop."""
     while True:
+        if session.header:
+            print(session.header)
+        if session.flush is True:
+            session.flush = False
+            print(session.out)
         iterate = input(session.prompt).strip().lower()
         if iterate in ASK4HELP:
             print(HELP)
@@ -84,8 +89,10 @@ class Session(object):
         self.wnp = env_check('WNP')
         self.wnu = env_check('WNU')
         self.wnk = env_check('WNK')
+        self.flush = True
         self.prompt = PROMPT
-        self.out = ''
+        self.header = 'The wordnik repl interface, alpha sub 0.0.1'
+        self.out = 'Type "begin" to start the game (alpha)'
         self.menu = {}
         self.api = api.ApiHandler(self.wnu, self.wnp, self.wnk)
 
@@ -96,15 +103,14 @@ class Session(object):
     def begin(self):
         """Command for user to start game."""
         self._startGame()
-        self.out = self.permalinks
+        self.out = ("Words should have printed above as they were being "
+                    "defined.\nRecommendation: enter `pdb` from the wordnik "
+                    "repl and type `session.master_dict`.")
+        self.master_dict = self._buildDictionary(self.permalinks['master'])
 
     def _startGame(self):
         """Get words from lists and invoke game."""
         self._getPermalinks()
-
-    def _saveResults(self):
-        """Save game score."""
-        pass
 
     def _getPermalinks(self):
         """Construct permaLinks names from existing wordlists."""
@@ -117,5 +123,20 @@ class Session(object):
             pdb_time("permalinks not == 3")
         self.permalinks = permalinks
 
+    def _buildDictionary(self, permalink):
+        """Look up all definitions."""
+        word_list = self.api.wordsOnList(permalink)
+        word_dict = {}
+        for word in word_list:
+            word_dict[word] = self.api.defineWord(word)
+            print(word)
+        print('\nDone!')
+        return word_dict
 
-repl(Session())
+    def _saveResults(self):
+        """Save game score."""
+        pass
+
+
+session = Session()
+repl(session)

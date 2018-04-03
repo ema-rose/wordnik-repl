@@ -65,3 +65,34 @@ class ApiHandler(object):
             return wordlists
         else:
             self._api_error('Unable to retrieve word lists.', req)
+
+    def wordsOnList(self, permalink):
+        """Return list of words given a permalink."""
+        uri = full_uri('wordList', permalink, 'words')
+        req = requests.get(uri, headers=self.headers)
+        if req.status_code == 200:
+            words = []
+            for json_object in req.json():
+                words.append(json_object['word'])
+            return words
+        else:
+            self._api_error('Unable to retrieve words on wordlist.', req)
+
+    def defineWord(self, word):
+        """Return the longest definition for a word."""
+        uri = full_uri('word', word, 'definitions')
+        req = requests.get(uri, headers=self.headers)
+        if req.status_code == 200:
+            length = len(req.json())
+            for json_object in req.json():
+                if length == 1:
+                    return json_object['text']
+                i = 0
+                the_def = ''
+                while i < length:
+                    if len(json_object['text']) > len(the_def):
+                        the_def = json_object['text']
+                    i += 1
+            return the_def
+        else:
+            self._api_error('Unable to get definition.', req)
