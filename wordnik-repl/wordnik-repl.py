@@ -5,6 +5,7 @@ import pdb
 import sys
 
 import api
+import game
 
 PROMPT = 'wordnik repl >> '
 EXIT = ['exit', 'exit()', 'quit', 'quit()']
@@ -95,6 +96,7 @@ class Session(object):
         self.out = 'Type "begin" to start the game (alpha)'
         self.menu = {}
         self.api = api.ApiHandler(self.wnu, self.wnp, self.wnk)
+        self.master_dict = {}
 
     def test(self):
         """Test."""
@@ -102,11 +104,15 @@ class Session(object):
 
     def begin(self):
         """Command for user to start game."""
-        self._startGame()
-        self.out = ("Words should have printed above as they were being "
-                    "defined.\nRecommendation: enter `pdb` from the wordnik "
-                    "repl and type `session.master_dict`.")
-        self.master_dict = self._buildDictionary(self.permalinks['master'])
+        if self.master_dict == {}:
+            self._startGame()
+            self.out = ("Words should have printed above as they were being "
+                        "defined.\nRecommendation: enter `pdb` from the wordnik "
+                        "repl and type `session.master_dict`.")
+            self.master_dict = self._buildDictionary(self.permalinks['master'])
+        self.current_game = game.Game(self.master_dict)
+        self.current_game.play()
+        print("\nGame over")
 
     def _startGame(self):
         """Get words from lists and invoke game."""
