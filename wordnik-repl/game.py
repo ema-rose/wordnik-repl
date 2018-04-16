@@ -1,5 +1,7 @@
 import random
 import pdb
+import os
+import time
 
 def pick_ten(game_dictionary):
     """will return 10"""
@@ -35,6 +37,7 @@ class Game(object):
 
     def play(self):
         """Actually play the game."""
+        os.system('cls' if os.name == 'nt' else 'clear')
         for i in range(2):
             # this is the round
             for w in self.words:
@@ -43,8 +46,8 @@ class Game(object):
                 correct = self.words[w]
                 all_defs.append(correct)
                 random.shuffle(all_defs)
-                print('the word is: {}'.format(w))
-                print('\n\nthe definitions are:')
+                print('\n\nThe word is: {}'.format(w))
+                print('\n\nThe definitions are:')
                 for i in range(len(all_defs)):
                     print('\n     {} -- {}'.format(i, all_defs[i]))
                 answer = input('Guess please: ').strip().lower()
@@ -54,7 +57,10 @@ class Game(object):
                     self.score += 0.5
                 else:
                     print('Incorrect :(\n')
-                    print('the correct definition for {} is: {}\n\n\n'.format(w, correct))
+                    print('The correct definition for {} is: {}\n\n\n'.format(w, correct))
+                print('  Current score: {}'.format(self.score))
+                input(' -- Press enter to continue -- ')
+                os.system('cls' if os.name == 'nt' else 'clear')
         print('Final score: {} out of 10'.format(self.score))
 
 # def session_words(master_dictionary):
